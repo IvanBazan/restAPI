@@ -1,9 +1,19 @@
 import Vue from 'https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.esm.browser.js'
 
-var myVue = new Vue({
+Vue.component('loader', {
+    template: `
+        <div style="display: flex; justify-content: center; align-items: center"> 
+            <div class="spinner-border" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+    `})
+
+new Vue({
     el: '#app',
     data() {
         return {
+            loading: false,
             form: {
                 name: '',
                 value: ''
@@ -30,5 +40,47 @@ var myVue = new Vue({
             console.log(this.contacts)
             this.contacts = this.contacts.filter(c => c.id !== id)
         }
+    }
+})
+
+async function request(url, method = 'GET', data = null){
+    try {
+        const headers = {}
+        let body
+        if (data) {
+            headers['Content-Type'] = 'application/json'
+            body = JSON.stringify(data)
+        }
+
+        const response = await fetch(url, {
+            method,
+            headers,
+            body
+        })
+        return await response.json()
+    } catch (e) {
+        console.warn('Error: ', e.message)
+    }
+
+
+}
+
+new Vue({
+    el: '#array-rendering',
+    data() {
+        return {
+            loading: false,
+            indexList: [],
+        };
+    },
+    // computed: {
+    //     idByTitle() {
+    //         return this.todos.filter(item => item.todos.indexOf(this.search) !== -1)
+    //     },
+    // },
+    async mounted () {
+        this.loading = true
+        this.indexList = await request('http://127.0.0.1:8000/getIDList')
+        this.loading = false
     }
 })

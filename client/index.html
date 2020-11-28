@@ -13,8 +13,6 @@
         }
     </style>
 </head>
-<body>
-
 <div class="container pt-3" id="app" v-cloak>
     <h1>REST API</h1>
 
@@ -43,7 +41,19 @@
     </div>
     <p v-else>Контактов нет</p>
 </div>
-
+<div v-if="loading">
+    <div style="display: flex; justify-content: center; align-items: center">
+        <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+</div>
+<div v-else-if="indexList.length">
+    <ul id="array-rendering" class="demo">
+        <li v-for="item in indexList">{{item}}</li>
+    </ul>
+    <p v-else>Нет записей</p>
+</div>
 
 <script type="module" src="script.js"></script>
 </body>
