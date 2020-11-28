@@ -1,0 +1,23 @@
+{
+  "name": "restapi",
+  "version": "1.0.0",
+  "description": "rest api",
+  "main": "app.js",
+  "scripts": {
+    "start": "app.js",
+    "dev": "nodemon app.js"
+  },
+  "keywords": [
+    "rest",
+    "JS",
+    "Python"
+  ],
+  "author": "Ivan Bazanov",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.6"
+  }
+}
