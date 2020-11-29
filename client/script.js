@@ -9,39 +9,46 @@ Vue.component('loader', {
         </div>
     `})
 
+
 new Vue({
-    el: '#app',
+    el: '#array-rendering',
     data() {
         return {
             loading: false,
-            form: {
-                name: '',
-                value: ''
-            },
-            contacts: [{id: Date.now(), name: 'User', value: '9595959595', marked: false}]
-        }
+            search: [],
+            selected: '',
+            indexList: [],
+            data: [],
+        };
     },
     computed: {
-        canCreate() {
-            return this.form.value.trim() && this.form.name.trim()
+        indexList_f: function() {
+            let filtered = this.indexList.filter(indexList => indexList.indexOf(this.search) !== -1)
+            filtered = filtered.sort()
+            return (filtered.length > 10) ? filtered.slice(0, 10) : filtered
+        },
+    },
+    mounted() {
+        this.getIndexList()
+    },
+    methods: {
+        async getIndexList() {
+            this.loading = true
+            this.indexList = await request('http://127.0.0.1:8000/getIDList')
+            this.loading = false
+        },
+        async getDataById(id) {
+            let result = await request('http://127.0.0.1:8000/getData/' + id)
+            this.data.push(result)
+        },
+        changeSearch(text) {
+            this.selected = text
+            this.data.pop()
+            this.getDataById(text)
         }
     },
-    methods:{
-        createContact() {
-            const{...contact} = this.form
-            this.contacts.push({...contact, id: Date.now(), marked: false })
-            this.form.name = this.form.value = ''
-        },
-        markContact(id){
-            const contact = this.contacts.find(c => c.id === id)
-            contact.marked = true
-        },
-        removeContact(id){
-            console.log(this.contacts)
-            this.contacts = this.contacts.filter(c => c.id !== id)
-        }
-    }
 })
+
 
 async function request(url, method = 'GET', data = null){
     try {
@@ -51,7 +58,6 @@ async function request(url, method = 'GET', data = null){
             headers['Content-Type'] = 'application/json'
             body = JSON.stringify(data)
         }
-
         const response = await fetch(url, {
             method,
             headers,
@@ -61,26 +67,38 @@ async function request(url, method = 'GET', data = null){
     } catch (e) {
         console.warn('Error: ', e.message)
     }
-
-
 }
 
-new Vue({
-    el: '#array-rendering',
-    data() {
-        return {
-            loading: false,
-            indexList: [],
-        };
-    },
-    // computed: {
-    //     idByTitle() {
-    //         return this.todos.filter(item => item.todos.indexOf(this.search) !== -1)
-    //     },
-    // },
-    async mounted () {
-        this.loading = true
-        this.indexList = await request('http://127.0.0.1:8000/getIDList')
-        this.loading = false
-    }
-})
+// new Vue({
+//     el: '#app',
+//     data() {
+//         return {
+//             loading: false,
+//             form: {
+//                 name: '',
+//                 value: ''
+//             },
+//             contacts: [{id: Date.now(), name: 'User', value: '9595959595', marked: false}]
+//         }
+//     },
+//     computed: {
+//         canCreate() {
+//             return this.form.value.trim() && this.form.name.trim()
+//         }
+//     },
+//     methods:{
+//         createContact() {
+//             const{...contact} = this.form
+//             this.contacts.push({...contact, id: Date.now(), marked: false })
+//             this.form.name = this.form.value = ''
+//         },
+//         markContact(id){
+//             const contact = this.contacts.find(c => c.id === id)
+//             contact.marked = true
+//         },
+//         removeContact(id){
+//             console.log(this.contacts)
+//             this.contacts = this.contacts.filter(c => c.id !== id)
+//         }
+//     }
+// })

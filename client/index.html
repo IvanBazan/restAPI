@@ -13,46 +13,31 @@
         }
     </style>
 </head>
-<div class="container pt-3" id="app" v-cloak>
+<body>
+<div class="container pt-3" id="array-rendering" v-cloak>
     <h1>REST API</h1>
-
-    <form class="form-inline mb-3" @submit.prevent="createContact">
-        <div class="form-group mr-5">
-            <label for="name" class="mr-3">Имя</label>
-            <input type="text" class="form-control" id="name" v-model="form.name">
-        </div>
-        <div class="form-group mr-5">
-            <label for="value" class="mr-3">Значение</label>
-            <input type="text" class="form-control" id="value" v-model="form.value">
-        </div>
-        <button class="btn btn-primary" type="submit" :disabled="!canCreate">Создать</button>
-    </form>
-
-    <div v-if="contacts.length">
-        <div class="card mb-3" v-for="contact in contacts">
-            <div class="card-body">
-                <h5 class="card-title" :style="{color: contact.marked ? 'red' : 'black'}">{{contact.name}}</h5>
-                <p class="card-text">{{contact.value}}</p>
-                <p class="card-text">{{contact.id}}</p>
-                <button class="btn btn-primary" @click="markContact(contact.id)" :disabled="contact.marked">Отметить</button>
-                <button class="btn btn-danger" @click="removeContact(contact.id)">Удалить</button>
-            </div>
-        </div>
+    <div class="form-group mr-5">
+        <input v-model="search" class="form-control" placeholder="Type ID to filter the list">
     </div>
-    <p v-else>Контактов нет</p>
-</div>
-<div v-if="loading">
-    <div style="display: flex; justify-content: center; align-items: center">
-        <div class="spinner-border" role="status">
-            <span class="sr-only">Loading...</span>
-        </div>
+    <hr>
+    <div v-if="loading">
+        <loader />
     </div>
-</div>
-<div v-else-if="indexList.length">
-    <ul id="array-rendering" class="demo">
-        <li v-for="item in indexList">{{item}}</li>
-    </ul>
+    <div v-else-if="indexList.length">
+        <ul class="demo">
+            <li v-for="item in indexList_f" @click="changeSearch(item)">{{item}}</li>
+        </ul>
+    </div>
     <p v-else>Нет записей</p>
+
+    <hr>
+    <div v-for="item in data" :key="id">
+        <h2>Data for {{item.id}}</h2>
+        <hr>
+        <div v-for="(value, name) in item">
+            <p>{{name}} : {{value}}</p>
+        </div>
+    </div>
 </div>
 
 <script type="module" src="script.js"></script>
