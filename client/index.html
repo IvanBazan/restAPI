@@ -14,29 +14,34 @@
     </style>
 </head>
 <body>
-<div class="container pt-3" id="array-rendering" v-cloak>
-    <h1>REST API</h1>
-    <div class="form-group mr-5">
-        <input v-model="search" class="form-control" placeholder="Type ID to filter the list">
-    </div>
+<div class="container pt-3" id="app" v-cloak>
+    <h1>DATA FROM REST API</h1>
     <hr>
     <div v-if="loading">
         <loader />
     </div>
     <div v-else-if="indexList.length">
-        <ul class="demo">
-            <li v-for="item in indexList_f" @click="changeSearch(item)">{{item}}</li>
-        </ul>
+        <div class="form-group mr-5">
+            <input v-model="search" class="form-control" placeholder="Type ID to filter the list">
+        </div>
+        <div class="jumbotron" style="display: flex; padding: 2rem 2rem">
+            <div>
+            <ul>
+                <li v-for="item in indexList_f.shortList" @click="selectId(item)">{{item}}</li>
+            </ul>
+            <p>Total {{indexList_f.filteredLength}} items</p>
+            </div>
+            <p class="lead" style="display: block; margin: auto; width: 30%">Click on the ID to see the data</p>
+        </div>
     </div>
     <p v-else>Нет записей</p>
-
     <hr>
-    <div v-for="item in data" :key="id">
+    <div v-for="item in data" :key="id" v-cloak>
         <h2>Data for {{item.id}}</h2>
         <hr>
-        <div v-for="(value, name) in item">
-            <p>{{name}} : {{value}}</p>
-        </div>
+        <ul v-for="(value, name) in item">
+            <li><div style="display: inline-block; width: 20%">{{name}}</div>  {{value}}</li>
+        </ul>
     </div>
 </div>
 

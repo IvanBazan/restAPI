@@ -7,15 +7,16 @@ Vue.component('loader', {
                 <span class="sr-only">Loading...</span>
             </div>
         </div>
-    `})
+    `
+})
 
 
 new Vue({
-    el: '#array-rendering',
+    el: '#app',
     data() {
         return {
             loading: false,
-            search: [],
+            search: '',
             selected: '',
             indexList: [],
             data: [],
@@ -23,10 +24,11 @@ new Vue({
     },
     computed: {
         indexList_f: function() {
-            let filtered = this.indexList.filter(indexList => indexList.indexOf(this.search) !== -1)
+            let filtered = this.indexList.filter(indexList => indexList.toLowerCase().indexOf(this.search.toLowerCase()) !== -1)
             filtered = filtered.sort()
-            return (filtered.length > 10) ? filtered.slice(0, 10) : filtered
-        },
+            const filteredLength = filtered.length
+            return {shortList:(filteredLength > 10) ? filtered.slice(0, 10) : filtered, filteredLength: filteredLength}
+        }
     },
     mounted() {
         this.getIndexList()
@@ -41,10 +43,10 @@ new Vue({
             let result = await request('http://127.0.0.1:8000/getData/' + id)
             this.data.push(result)
         },
-        changeSearch(text) {
-            this.selected = text
+        selectId(id) {
+            this.selected = id
             this.data.pop()
-            this.getDataById(text)
+            this.getDataById(id)
         }
     },
 })
@@ -68,37 +70,3 @@ async function request(url, method = 'GET', data = null){
         console.warn('Error: ', e.message)
     }
 }
-
-// new Vue({
-//     el: '#app',
-//     data() {
-//         return {
-//             loading: false,
-//             form: {
-//                 name: '',
-//                 value: ''
-//             },
-//             contacts: [{id: Date.now(), name: 'User', value: '9595959595', marked: false}]
-//         }
-//     },
-//     computed: {
-//         canCreate() {
-//             return this.form.value.trim() && this.form.name.trim()
-//         }
-//     },
-//     methods:{
-//         createContact() {
-//             const{...contact} = this.form
-//             this.contacts.push({...contact, id: Date.now(), marked: false })
-//             this.form.name = this.form.value = ''
-//         },
-//         markContact(id){
-//             const contact = this.contacts.find(c => c.id === id)
-//             contact.marked = true
-//         },
-//         removeContact(id){
-//             console.log(this.contacts)
-//             this.contacts = this.contacts.filter(c => c.id !== id)
-//         }
-//     }
-// })
